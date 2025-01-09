@@ -1,0 +1,30 @@
+*{
+    font-family: "Roboto", serif;
+    margin: 0px;
+    padding: 0px;
+}
+
+.avatar{
+    border-radius: 50%;
+}
+
+.container{
+    display: flex;
+    justify-content: center;
+    margin-top: 15vh;
+   
+    
+}
+
+.first{
+    margin-right: 15px;
+    background-color: rgba(144, 139, 139, 0.081);
+    padding: 15px;
+    width: 30vw;
+    
+}
+
+.second{
+    background-color: rgba(144, 144, 139, 0.081);
+    width: 30vw;
+}
