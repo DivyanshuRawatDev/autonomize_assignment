@@ -30,6 +30,16 @@ const Login = () => {
           <button type="submit">Get</button>
         </form>
       </div>
+      <div style={{marginTop:"25px"}}>
+        <h3>
+          <span style={{ color: "red" }}>Note :</span>
+          <span> To run backend please refer to readme file in backend folder</span>
+        </h3>
+        <h3>
+        <span style={{ color: "red" }}>Note :</span>
+        <span> Backend has all functionality completed.</span>
+        </h3>
+      </div>
     </div>
   );
 };
