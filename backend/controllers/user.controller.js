@@ -20,6 +20,10 @@ const addUserToDB = async (req, res) => {
     const user = await UserModel.findOne({ username });
 
     if (user) {
+      if (user.isDeleted == true) {
+        user.isDeleted = false;
+        await user.save();
+      }
       return res
         .status(200)
         .json({ message: "User already present", data: user });
@@ -93,9 +97,7 @@ const getMutualFriends = async (req, res) => {
 
     return res.status(200).json({
       message: "mutual Friends",
-      friends: mutualFriends,
-      followers,
-      followings,
+      data: user,
     });
   } catch (error) {
     console.log("Error while getting followers : " + error?.message);
@@ -150,9 +152,36 @@ const getSortedUserData = async (req, res) => {
       [sortField]: 1,
     });
 
-    return res.status(200).json({ message: "sorted succesfully", data: sortedUsers });
+    return res
+      .status(200)
+      .json({ message: "sorted succesfully", data: sortedUsers });
   } catch (error) {
     console.log("Error while get sorted user data" + error.message);
+  }
+};
+
+const updateProfile = async (req, res) => {
+  const { location, bio } = req.body;
+  const username = req.params;
+  try {
+    const updateFiled = {};
+    if (location) updateFiled.location = location;
+    if (bio) updateFiled.bio = bio;
+
+    if (Object.keys(updateFiled).length == 0) {
+      return res.status(400).json({ message: "Nothing to update" });
+    }
+    const user = await UserModel.findOneAndUpdate(
+      { username },
+      { $set: { location: updateFiled } },
+      { new: true }
+    );
+
+    return res
+      .status(200)
+      .json({ message: "User updated successdully", data: user });
+  } catch (error) {
+    console.log("Error while update profile : " + error.message);
   }
 };
 
@@ -161,5 +190,6 @@ module.exports = {
   getMutualFriends,
   getSearchedValue,
   softDeleteUser,
-  getSortedUserData
+  getSortedUserData,
+  updateProfile,
 };
