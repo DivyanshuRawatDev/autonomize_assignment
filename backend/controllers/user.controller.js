@@ -19,6 +19,7 @@ const addUserToDB = async (req, res) => {
   if (!username) {
     return res.status(400).json({ message: "Username is required" });
   }
+
   try {
     const user = await UserModel.findOne({ username });
 
@@ -33,6 +34,7 @@ const addUserToDB = async (req, res) => {
     }
 
     const userData = await fetchUserData(username);
+    console.log(userData)
 
     let newUser = await UserModel.create({
       username: userData?.login,
