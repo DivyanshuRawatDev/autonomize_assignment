@@ -15,7 +15,10 @@ const fetchUserData = async (username) => {
 };
 
 const addUserToDB = async (req, res) => {
-  const { username } = req.body;
+  const { username } = req?.body;
+  if (!username) {
+    return res.status(400).json({ message: "Username is required" });
+  }
   try {
     const user = await UserModel.findOne({ username });
 
