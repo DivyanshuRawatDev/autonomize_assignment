@@ -1,26 +1,36 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { getMutualFriends } from "../redux/slices/userSlice";
+import { getMutualFriends, updateUserProfile } from "../redux/slices/userSlice";
 import axios from "axios";
 import { useNavigate } from "react-router";
 import { toast } from "react-toastify";
+import { BASE_URL } from "../config/common";
 
 const Home = () => {
   const [username, setUsername] = useState("");
   const [searchedUsers, setSearchedUsers] = useState([]);
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const data = useSelector((store) => store.user.autonomize.users);
+  const [location, setLocation] = useState("");
+  const [bio, setBio] = useState("");
+  const data = useSelector((store) => store?.user?.autonomize?.users);
   const [sortField, setSortField] = useState("created_at");
 
   const handleClick = () => {
     dispatch(getMutualFriends(data?.username));
   };
 
+  const handleUpdateProfile = (username) => {
+    const updates = { location: location, bio: bio };
+    dispatch(updateUserProfile({ username, updates }));
+    setLocation("");
+    setBio("");
+  };
+
   const handleSort = async (field) => {
     try {
       const response = await axios.get(
-        `http://localhost:8080/api/sorteduser?sortBy=${field}`
+        `${BASE_URL}/api/sorteduser?sortBy=${field}`
       );
       setSearchedUsers(response?.data?.data);
       toast.success("Users sorted successfully");
@@ -33,7 +43,7 @@ const Home = () => {
   const handleSearch = async (username) => {
     try {
       const response = await axios.get(
-        `http://localhost:8080/api/search?username=${username}`
+        `${BASE_URL}/api/search?username=${username}`
       );
       setSearchedUsers(response?.data?.data);
       console.log(searchedUsers);
@@ -45,7 +55,7 @@ const Home = () => {
   const handleDelete = async (username) => {
     try {
       const response = await axios.put(
-        `http://localhost:8080/api/softDelete/${username}`
+        `${BASE_URL}/api/softDelete/${username}`
       );
       toast.success(response?.data?.message);
       navigate("/");
@@ -54,7 +64,7 @@ const Home = () => {
     }
   };
 
-  console.log(searchedUsers);
+  // console.log(searchedUsers);
   return (
     <div className="container">
       <div className="first">
@@ -78,7 +88,31 @@ const Home = () => {
           <h2 style={{}}>{data?.name}</h2>
           <h2 style={{ fontWeight: 400, color: "grey" }}>{data?.username}</h2>
           <p>{data?.bio}</p>
+          <p>Location : {data?.location}</p>
         </div>
+
+        <div style={{ marginTop: "20px" }}>
+          <input
+            type="text"
+            placeholder="Update Location"
+            value={location}
+            onChange={(e) => setLocation(e.target.value)}
+            style={{ marginBottom: "10px", width: "100%" }}
+          />
+          <textarea
+            placeholder="Update Bio"
+            value={bio}
+            onChange={(e) => setBio(e.target.value)}
+            style={{ marginBottom: "10px", width: "100%", height: "60px" }}
+          />
+          <button
+            onClick={()=>handleUpdateProfile(data?.username)}
+            style={{ backgroundColor: "blue", color: "white", padding: "10px" }}
+          >
+            Update Profile
+          </button>
+        </div>
+
         <hr />
         <div
           style={{
@@ -106,9 +140,11 @@ const Home = () => {
           >
             Get Mutual Friends
           </button>
-          {data?.mutualFriends.length ? (
+          {data?.mutualFriends ? (
             <span>You have {data?.mutualFriends.length} mutual friends</span>
-          ) : null}
+          ) : (
+            <span>Click to see mutual friends</span>
+          )}
           <hr />
           <button
             style={{ padding: "3px", color: "white", backgroundColor: "red" }}
