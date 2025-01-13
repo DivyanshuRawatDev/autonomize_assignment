@@ -36,6 +36,10 @@ const addUserToDB = async (req, res) => {
     const userData = await fetchUserData(username);
     console.log(userData)
 
+    if (!userData) {
+      return res.status(500).json({ message: "Failed to fetch data from GitHub API" });
+    }
+
     let newUser = await UserModel.create({
       username: userData?.login,
       avatar_url: userData?.avatar_url,
