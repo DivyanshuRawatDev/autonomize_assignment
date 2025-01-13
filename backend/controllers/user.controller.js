@@ -162,18 +162,21 @@ const getSortedUserData = async (req, res) => {
 
 const updateProfile = async (req, res) => {
   const { location, bio } = req.body;
-  const username = req.params;
+  const username = req.params?.username;
   try {
     const updateFiled = {};
     if (location) updateFiled.location = location;
     if (bio) updateFiled.bio = bio;
+
+    console.log(updateFiled)
+    console.log(username)
 
     if (Object.keys(updateFiled).length == 0) {
       return res.status(400).json({ message: "Nothing to update" });
     }
     const user = await UserModel.findOneAndUpdate(
       { username },
-      { $set: { location: updateFiled } },
+      { $set:   updateFiled  },
       { new: true }
     );
 
